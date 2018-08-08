@@ -41,6 +41,7 @@ docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v /var/waves:/waves w
 **Note: All variables are optional.**  
 
 ###Configuration
+
 The image supports config customization with env variables. 
 Depending on env values the image generates `local.conf` file and stores it in `/waves/configs` directory.
 The simple rule of how to set a value in the configuration file:
