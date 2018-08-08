@@ -17,12 +17,12 @@ It is highly recommended to read more about [Waves Node configuration](https://d
 
 The simplest way to run a container:
 ```
-docker run -it wavesplatform/waves-node
+docker run -it wavesplatform/node
 ```
 
 **Note: We recommend to start a container like below:**
 ```
-docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v /var/waves:/waves wavesplatform/waves-node    
+docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v /var/waves:/waves wavesplatform/node    
 ``` 
 
 **You can run container with predefined environment variables:**
