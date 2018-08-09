@@ -6,7 +6,7 @@ echo "VERSION: $WAVES_VERSION"
 echo "Downloading jar file ..."
 FILENAME="waves-all-$WAVES_VERSION.jar"
 if [ ! -f "/waves-node/${FILENAME}" ]; then
-/usr/bin/curl -sLo "/waves-node/${FILENAME}" "https://github.com/wavesplatform/Waves/releases/download/v${WAVES_VERSION}/${FILENAME}"
+    /usr/bin/curl -sLo "/waves-node/${FILENAME}" "https://github.com/wavesplatform/Waves/releases/download/v${WAVES_VERSION}/${FILENAME}"
 fi
 
 
