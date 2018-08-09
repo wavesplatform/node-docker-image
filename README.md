@@ -22,7 +22,7 @@ docker run -it wavesplatform/node
 
 **Note: We recommend to start a container like below:**
 ```
-docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v /var/waves:/waves wavesplatform/node    
+docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
 ``` 
 
 **You can run container with predefined environment variables:**
@@ -51,3 +51,5 @@ The simple rule of how to set a value in the configuration file:
 3. Capitalize the final string.
 
 For instance, if you want to set the value of `waves.rest-api.enable`, pass an environment variable `WAVES__REST_API__ENABLE=no`;
+
+### 
