@@ -20,9 +20,14 @@ The simplest way to run a container:
 docker run -it wavesplatform/node
 ```
 
-**Note: We recommend to start a container like below:**
+**Note: We recommend to start a container like below for MAINNET:**
 ```
-docker run -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
+docker run -p 6869:6869 -p 6868:6868 -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
+``` 
+
+**For TESTNET:**
+```
+docker run -p 6869:6869 -p 6863:6863 -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
 ``` 
 
 **You can run container with predefined environment variables:**
