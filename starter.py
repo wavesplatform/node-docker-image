@@ -1,15 +1,17 @@
 import os
 import urllib.request
-from os import path
+import sys
 import requests
 from pyhocon import ConfigFactory, HOCONConverter
 import pywaves as pw
 import base58
 import string
 import random
+import math
+from tqdm import tqdm
 
-DEFAULT_VERSION = '0.13.3'
-network_names = ['MAINNET', 'TESTNET', 'DEVNET']
+DEFAULT_VERSION = 'latest'
+network_names = ['MAINNET', 'TESTNET', 'CUSTOM']
 
 NETWORK = os.environ.get('WAVES_NETWORK')
 
@@ -51,6 +53,30 @@ def parse_env_variables():
     return dictionary
 
 
+def download_from_url(url, dst):
+    # Streaming, so we can iterate over the response.
+    r = requests.get(url, stream=True)
+
+    # Total size in bytes.
+    total_size = int(r.headers.get('content-length', 0))
+    block_size = 1024
+    wrote = 0
+    with open(dst, 'wb') as f:
+        for data in tqdm(r.iter_content(block_size), total=math.ceil(total_size // block_size), unit='KB',
+                         unit_scale=True):
+            wrote = wrote + len(data)
+            f.write(data)
+    if total_size != 0 and wrote != total_size:
+        print("ERROR, something went wrong")
+
+
+def download_jar_file(version_name, version_number):
+    file_name = "waves-all-" + version_number + ".jar"
+    print('Downloading file: ' + file_name)
+    link = "https://github.com/wavesplatform/Waves/releases/download/v" + version_number + "/" + file_name
+    download_from_url(link, '/waves-node/waves-all-' + version_name + '.jar')
+
+
 def get_wallet_data():
     seed = os.environ.get('WAVES_WALLET_SEED', pw.Address().seed)
     seed_base58 = os.environ.get('WAVES_WALLET_SEED_BASE58')
@@ -74,8 +100,9 @@ if __name__ == "__main__":
     if NETWORK is None or NETWORK not in network_names:
         NETWORK = 'TESTNET'
 
+    WAVES_VERSION = os.getenv('WAVES_VERSION', DEFAULT_VERSION)
     VERSION = os.getenv('WAVES_VERSION', DEFAULT_VERSION)
-    if VERSION == 'latest':
+    if VERSION.lower() == 'latest':
         VERSION = get_latest_version(NETWORK)
 
     create_configs_dir()
@@ -92,7 +119,13 @@ if __name__ == "__main__":
     nested_set(env_dict, ['waves', 'wallet', 'seed'], wallet_data[0])
     nested_set(env_dict, ['waves', 'wallet', 'password'], wallet_data[1])
 
+    WAVES_DECLARED_ADDRESS = os.getenv('WAVES_DECLARED_ADDRESS')
+    if WAVES_DECLARED_ADDRESS is not None:
+        nested_set(env_dict, ['waves', 'network', 'declared-address'], WAVES_DECLARED_ADDRESS)
+
     config = ConfigFactory.from_dict(env_dict)
     local_conf = HOCONConverter.convert(config, 'hocon')
     with open('/waves/configs/local.conf', 'w') as file:
         file.write(local_conf)
+
+    download_jar_file(WAVES_VERSION, VERSION)
