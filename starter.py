@@ -11,6 +11,7 @@ import math
 from tqdm import tqdm
 
 DEFAULT_VERSION = 'latest'
+DEFAULT_AUTODETECT = 'yes'
 network_names = ['MAINNET', 'TESTNET', 'CUSTOM']
 
 NETWORK = os.environ.get('WAVES_NETWORK')
@@ -96,6 +97,19 @@ def get_wallet_data():
     return seed_base58, password
 
 
+def get_external_ip():
+    return requests.get('http://ifconfig.co/ip').text.rstrip("\n\r")
+
+
+def get_port_number(network):
+    if network == 'TESTNET':
+        return '6863'
+    elif network == 'MAINNET':
+        return '6868'
+    else:
+        return '6869'
+
+
 if __name__ == "__main__":
     if NETWORK is None or NETWORK not in network_names:
         NETWORK = 'TESTNET'
@@ -119,8 +133,13 @@ if __name__ == "__main__":
     nested_set(env_dict, ['waves', 'wallet', 'seed'], wallet_data[0])
     nested_set(env_dict, ['waves', 'wallet', 'password'], wallet_data[1])
 
+    WAVES_AUTODETECT_ADDRESS = os.getenv('WAVES_AUTODETECT_ADDRESS', DEFAULT_AUTODETECT)
     WAVES_DECLARED_ADDRESS = os.getenv('WAVES_DECLARED_ADDRESS')
-    if WAVES_DECLARED_ADDRESS is not None:
+    if WAVES_AUTODETECT_ADDRESS.lower() == 'yes' and WAVES_DECLARED_ADDRESS is None:
+        WAVES_DECLARED_ADDRESS = get_external_ip() + ':' + get_port_number(NETWORK)
+        print("Detected address is " + WAVES_DECLARED_ADDRESS)
+        nested_set(env_dict, ['waves', 'network', 'declared-address'], WAVES_DECLARED_ADDRESS)
+    elif WAVES_DECLARED_ADDRESS is not None:
         nested_set(env_dict, ['waves', 'network', 'declared-address'], WAVES_DECLARED_ADDRESS)
 
     config = ConfigFactory.from_dict(env_dict)
