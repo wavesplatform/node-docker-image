@@ -1,6 +1,5 @@
 import os
 import urllib.request
-import sys
 import requests
 from pyhocon import ConfigFactory, HOCONConverter
 import pywaves as pw
@@ -9,6 +8,8 @@ import string
 import random
 import math
 from tqdm import tqdm
+import ipaddress
+
 
 DEFAULT_VERSION = 'latest'
 DEFAULT_AUTODETECT = 'yes'
@@ -100,7 +101,14 @@ def get_wallet_data():
 
 
 def get_external_ip():
-    return requests.get('http://ifconfig.co/ip').text.rstrip("\n\r")
+    plain_response = requests.get('http://ipinfo.io/ip').text.rstrip("\n\r")
+    try:
+        ip = ipaddress.ip_address(plain_response)
+        return plain_response
+    except ValueError:
+        return requests.get('http://ipecho.net/plain').text.rstrip("\n\r")
+    except:
+        return requests.get('http://icanhazip.com').text.rstrip("\n\r")
 
 
 def get_port_number(network):
