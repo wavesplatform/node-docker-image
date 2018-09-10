@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "VERSION: $WAVES_VERSION"
-
 /usr/bin/python3 "/waves-node/starter.py"
 echo "Node is starting..."
 mkdir -p /waves/data

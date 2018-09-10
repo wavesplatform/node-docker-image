@@ -14,6 +14,7 @@ DEFAULT_VERSION = 'latest'
 DEFAULT_AUTODETECT = 'yes'
 network_names = ['MAINNET', 'TESTNET', 'CUSTOM']
 
+DEFAULT_NODES = ['https://nodes.wavesnodes.com', 'https://testnodes.wavesnodes.com/', 'http://127.0.0.1:6869']
 NETWORK = os.environ.get('WAVES_NETWORK')
 
 
@@ -92,7 +93,8 @@ def get_wallet_data():
         seed_base58 = base58.b58encode(seed.encode())
     password = os.environ.get('WAVES_WALLET_PASSWORD', generate_password())
     if base58_provided is False:
-        print('Seed phrase:', seed)
+        print('Seed phrase: ', seed)
+        print('Address: ', pw.Address(seed=seed).address)
     print('Wallet password:', password)
     return seed_base58, password
 
@@ -110,6 +112,19 @@ def get_port_number(network):
         return '6869'
 
 
+def set_pywaves_node(network):
+    if network == 'TESTNET':
+        node = DEFAULT_NODES[1]
+        chain_id = None
+    elif network == 'MAINNET':
+        node = DEFAULT_NODES[0]
+        chain_id = None
+    else:
+        node = DEFAULT_NODES[2]
+        chain_id = 'E'
+    pw.setNode(node=node, chain=network.lower(), chain_id=chain_id)
+
+
 if __name__ == "__main__":
     if NETWORK is None or NETWORK not in network_names:
         NETWORK = 'TESTNET'
@@ -118,7 +133,7 @@ if __name__ == "__main__":
     VERSION = os.getenv('WAVES_VERSION', DEFAULT_VERSION)
     if VERSION.lower() == 'latest':
         VERSION = get_latest_version(NETWORK)
-
+    print("Version: " + WAVES_VERSION + "(" + VERSION + ")")
     create_configs_dir()
 
     file_path = "/waves/configs/waves-config.conf"
@@ -126,6 +141,7 @@ if __name__ == "__main__":
     urllib.request.urlretrieve(url, file_path)
 
     env_dict = parse_env_variables()
+    set_pywaves_node(NETWORK)
     wallet_data = get_wallet_data()
 
     nested_set(env_dict, ['waves', 'directory'], '/waves')
@@ -135,6 +151,7 @@ if __name__ == "__main__":
 
     WAVES_AUTODETECT_ADDRESS = os.getenv('WAVES_AUTODETECT_ADDRESS', DEFAULT_AUTODETECT)
     WAVES_DECLARED_ADDRESS = os.getenv('WAVES_DECLARED_ADDRESS')
+    print("WAVES_DECLARED_ADDRESS", WAVES_DECLARED_ADDRESS)
     if WAVES_AUTODETECT_ADDRESS.lower() == 'yes' and WAVES_DECLARED_ADDRESS is None:
         WAVES_DECLARED_ADDRESS = get_external_ip() + ':' + get_port_number(NETWORK)
         print("Detected address is " + WAVES_DECLARED_ADDRESS)
