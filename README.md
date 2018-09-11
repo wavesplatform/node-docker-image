@@ -22,12 +22,12 @@ docker run -it wavesplatform/node
 
 **Note: We recommend to start a container like below for MAINNET:**
 ```
-docker run -p 6869:6869 -p 6868:6868 -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
+docker run -p 6869:6869 -p 6868:6868 -e WAVES_NETWORK=MAINNET -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
 ``` 
 
 **For TESTNET:**
 ```
-docker run -p 6869:6869 -p 6863:6863 -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
+docker run -p 6869:6869 -p 6863:6863 -e WAVES_NETWORK=TESTNET -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE=2g -v YOUR_LOCAL_PATH_HERE:/waves wavesplatform/node    
 ``` 
 
 **You can run container with predefined environment variables:**
@@ -38,7 +38,7 @@ docker run -p 6869:6869 -p 6863:6863 -e WAVES_LOG_LEVEL=DEBUG -e WAVES_HEAP_SIZE
 |`WAVES_WALLET_SEED_BASE58`   |Base58 encoded seed.   |
 |`WAVES_WALLET_PASSWORD`      |Password for wallet file.    |
 |`WAVES_VERSION`              |Node version. Default value is `latest`. You can find the list of available versions [here](https://github.com/wavesplatform/Waves/releases).|
-|`WAVES_NETWORK`              |Available values are `MAINNET`, `TESTNET` and `CUSTOM`.   |
+|`WAVES_NETWORK`              |Available values are `MAINNET` and `TESTNET`.   |
 |`WAVES_LOG_LEVEL`            |Node logging level, available values: `OFF`, `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`. More details about logging are available [here](https://docs.wavesplatform.com/en/waves-full-node/logging.html).   |
 |`WAVES_HEAP_SIZE`            |Java Heap Size limit in -X Command-line Options notation (`-Xms=[your value]`). More details [here](https://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/jrdocs/refman/optionX.html)   |
 |`WAVES_CONFIG_FILE`          |Path to your Waves Configuration file.   |
