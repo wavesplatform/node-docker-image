@@ -94,7 +94,8 @@ def get_wallet_data():
         seed_base58 = base58.b58encode(seed.encode())
     password = os.environ.get('WAVES_WALLET_PASSWORD', generate_password())
     if base58_provided is False:
-        print('Seed phrase: ', seed)
+        if seed != os.environ.get('WAVES_WALLET_SEED'):
+            print('Seed phrase: ', seed)
         print('Address: ', pw.Address(seed=seed).address)
     print('Wallet password:', password)
     return seed_base58, password
@@ -122,15 +123,15 @@ def get_port_number(network):
 
 def set_pywaves_node(network):
     if network == 'TESTNET':
-        node = DEFAULT_NODES[1]
+        # node = DEFAULT_NODES[1]
         chain_id = None
     elif network == 'MAINNET':
-        node = DEFAULT_NODES[0]
+        # node = DEFAULT_NODES[0]
         chain_id = None
     else:
-        node = DEFAULT_NODES[2]
+        # node = DEFAULT_NODES[2]
         chain_id = 'E'
-    pw.setNode(node=node, chain=network.lower(), chain_id=chain_id)
+    pw.setNode(chain=network.lower(), chain_id=chain_id)
 
 
 if __name__ == "__main__":
