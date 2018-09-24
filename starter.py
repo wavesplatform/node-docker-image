@@ -9,6 +9,7 @@ import random
 import math
 from tqdm import tqdm
 import ipaddress
+import ast
 
 DEFAULT_VERSION = 'latest'
 DEFAULT_AUTODETECT = 'yes'
@@ -51,7 +52,11 @@ def parse_env_variables():
         if "__" in env_key:
             parts = env_key.split('__')
             keys = [x.lower().replace('_', '-') for x in parts]
-            nested_set(dictionary, keys, os.environ[env_key])
+            value = os.environ[env_key]
+            if isinstance(value, str) and len(value) > 0 and value[0] == '[' and value[-1] == ']':
+                print(value)
+                value = ast.literal_eval(value)
+            nested_set(dictionary, keys, value)
     return dictionary
 
 
