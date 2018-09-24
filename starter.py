@@ -10,7 +10,6 @@ import math
 from tqdm import tqdm
 import ipaddress
 
-
 DEFAULT_VERSION = 'latest'
 DEFAULT_AUTODETECT = 'yes'
 network_names = ['MAINNET', 'TESTNET', 'CUSTOM']
@@ -113,6 +112,9 @@ def get_external_ip():
 
 
 def get_port_number(network):
+    declared_port = os.getenv('WAVES_AUTODETECT_ADDRESS_PORT')
+    if declared_port is not None:
+        return declared_port
     if network == 'TESTNET':
         return '6863'
     elif network == 'MAINNET':
@@ -170,6 +172,7 @@ if __name__ == "__main__":
 
     config = ConfigFactory.from_dict(env_dict)
     local_conf = HOCONConverter.convert(config, 'hocon')
+    print(local_conf)
     with open('/waves/configs/local.conf', 'w') as file:
         file.write(local_conf)
 
