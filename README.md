@@ -48,6 +48,10 @@ docker run -p 6869:6869 -p 6863:6863 -e WAVES_NETWORK=TESTNET -e WAVES_LOG_LEVEL
 
 **Note: All variables are optional.**  
 
+If you want to pass configuration file to the node, it should be in mounted volume with path `configs/local.conf` file. 
+
+**Note: Environment variables override values in the configuration file.** 
+
 ## Configuration
 
 The image supports config customization with env variables. 

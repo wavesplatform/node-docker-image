@@ -13,10 +13,12 @@ import ast
 
 DEFAULT_VERSION = 'latest'
 DEFAULT_AUTODETECT = 'yes'
-network_names = ['MAINNET', 'TESTNET', 'CUSTOM']
+network_names = ['MAINNET', 'TESTNET', 'DEVNET']
 
 DEFAULT_NODES = ['https://nodes.wavesnodes.com', 'https://testnodes.wavesnodes.com/', 'http://127.0.0.1:6869']
 NETWORK = os.environ.get('WAVES_NETWORK')
+
+LOCAL_FILE_PATH = '/waves/configs/local.conf'
 
 
 def generate_password(size=12, chars=string.ascii_letters + string.digits):
@@ -27,8 +29,14 @@ def get_latest_version(network):
     releases_url = "https://api.github.com/repos/wavesplatform/Waves/releases"
     r = requests.get(url=releases_url)
     data = r.json()
+
+    if network.lower() == 'devnet':
+        network_name = 'testnet'
+    else:
+        network_name = network.lower()
+
     for item in data:
-        if network.lower() in item['name'].lower():
+        if network_name in item['name'].lower():
             print('Latest version for ' + network + ' is: ', item['name'])
             return item['tag_name'].replace('v', '')
 
@@ -102,7 +110,7 @@ def get_wallet_data():
             print('Seed phrase: ', seed)
         print('Address: ', pw.Address(seed=seed).address)
     print('Wallet password:', password)
-    return seed_base58, password
+    return {'seed': seed_base58, 'password': password}
 
 
 def get_external_ip():
@@ -111,8 +119,10 @@ def get_external_ip():
         ip = ipaddress.ip_address(plain_response)
         return plain_response
     except ValueError:
-        return requests.get('http://ipecho.net/plain').text.rstrip("\n\r")
-    except:
+        plain_response = requests.get('http://ipecho.net/plain').text.rstrip("\n\r")
+        ip = ipaddress.ip_address(plain_response)
+        return plain_response
+    except ValueError:
         return requests.get('http://icanhazip.com').text.rstrip("\n\r")
 
 
@@ -125,7 +135,7 @@ def get_port_number(network):
     elif network == 'MAINNET':
         return '6868'
     else:
-        return '6869'
+        return '6816'
 
 
 def set_pywaves_node(network):
@@ -156,14 +166,26 @@ if __name__ == "__main__":
     url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/waves-" + NETWORK.lower() + ".conf"
     urllib.request.urlretrieve(url, file_path)
 
-    env_dict = parse_env_variables()
-    set_pywaves_node(NETWORK)
     wallet_data = get_wallet_data()
+
+    print(wallet_data)
+
+    if os.path.exists(LOCAL_FILE_PATH):
+        env_dict = ConfigFactory.parse_file(LOCAL_FILE_PATH)
+        if 'waves' in env_dict and 'wallet' in env_dict['waves']:
+            if 'seed' in env_dict['waves']['wallet']:
+                wallet_data['seed'] = env_dict['waves.wallet.seed']
+            if 'password' in env_dict['waves']['wallet']:
+                wallet_data['password'] = env_dict['waves.wallet.password']
+    else:
+        env_dict = parse_env_variables()
+
+    set_pywaves_node(NETWORK)
 
     nested_set(env_dict, ['waves', 'directory'], '/waves')
     nested_set(env_dict, ['waves', 'data-directory'], '/waves/data')
-    nested_set(env_dict, ['waves', 'wallet', 'seed'], wallet_data[0])
-    nested_set(env_dict, ['waves', 'wallet', 'password'], wallet_data[1])
+    nested_set(env_dict, ['waves', 'wallet', 'seed'], wallet_data['seed'])
+    nested_set(env_dict, ['waves', 'wallet', 'password'], wallet_data['password'])
 
     WAVES_AUTODETECT_ADDRESS = os.getenv('WAVES_AUTODETECT_ADDRESS', DEFAULT_AUTODETECT)
     WAVES_DECLARED_ADDRESS = os.getenv('WAVES_DECLARED_ADDRESS')
@@ -178,7 +200,7 @@ if __name__ == "__main__":
     config = ConfigFactory.from_dict(env_dict)
     local_conf = HOCONConverter.convert(config, 'hocon')
     print(local_conf)
-    with open('/waves/configs/local.conf', 'w') as file:
+    with open(LOCAL_FILE_PATH, 'w') as file:
         file.write(local_conf)
 
     download_jar_file(WAVES_VERSION, VERSION)
