@@ -10,8 +10,11 @@ import math
 from tqdm import tqdm
 import ipaddress
 import ast
+from time import sleep
+
 
 DEFAULT_VERSION = 'latest'
+DEFAULT_THRESHOLD = 0
 DEFAULT_AUTODETECT = 'yes'
 network_names = ['MAINNET', 'TESTNET', 'DEVNET']
 
@@ -54,15 +57,21 @@ def create_configs_dir():
         os.mkdir("/waves/data")
 
 
-def parse_env_variables():
-    dictionary = dict()
+def parse_env_variables(ext_dict=dict()):
+    dictionary = ext_dict
     for env_key in os.environ:
+        value = os.environ[env_key]
+        print(f"Key: {env_key} , value: {value}")
         if "__" in env_key:
             parts = env_key.split('__')
             keys = [x.lower().replace('_', '-') for x in parts]
             value = os.environ[env_key]
+            if isinstance(value, str):
+                if value.lower() == 'true':
+                    value = 'yes'
+                if value.lower() == 'false':
+                    value = 'no'
             if isinstance(value, str) and len(value) > 0 and value[0] == '[' and value[-1] == ']':
-                print(value)
                 value = ast.literal_eval(value)
             nested_set(dictionary, keys, value)
     return dictionary
@@ -156,7 +165,13 @@ if __name__ == "__main__":
         NETWORK = 'TESTNET'
 
     WAVES_VERSION = os.getenv('WAVES_VERSION', DEFAULT_VERSION)
+    WAVES_THRESHOLD = int(os.getenv('WAVES_THRESHOLD', DEFAULT_THRESHOLD))
     VERSION = os.getenv('WAVES_VERSION', DEFAULT_VERSION)
+
+    if WAVES_THRESHOLD > 0:
+        print(f"Sleeping for {WAVES_THRESHOLD} seconds")
+        sleep(WAVES_THRESHOLD)
+
     if VERSION.lower() == 'latest':
         VERSION = get_latest_version(NETWORK)
     print("Version: " + WAVES_VERSION + "(" + VERSION + ")")
@@ -178,7 +193,8 @@ if __name__ == "__main__":
             if 'password' in env_dict['waves']['wallet']:
                 wallet_data['password'] = env_dict['waves.wallet.password']
     else:
-        env_dict = parse_env_variables()
+        env_dict = {}
+    env_dict = parse_env_variables(env_dict)
 
     set_pywaves_node(NETWORK)
 

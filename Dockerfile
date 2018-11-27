@@ -23,5 +23,5 @@ COPY entrypoint.sh /waves-node
 RUN chmod 777 /waves-node/entrypoint.sh
 
 VOLUME /waves
-EXPOSE 6869 6868 6863
+EXPOSE 6869 6868 6863 6864
 ENTRYPOINT ["/waves-node/entrypoint.sh"]
