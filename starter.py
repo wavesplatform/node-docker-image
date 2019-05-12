@@ -102,7 +102,7 @@ def download_jar_file(version_name, version_number):
 
 
 def get_wallet_data():
-    seed = os.environ.get('WAVES_WALLET_SEED', pw.Address().seed)
+    seed = os.environ.get('WAVES_WALLET_SEED', pw.Address(privateKey=None).seed)
     seed_base58 = os.environ.get('WAVES_WALLET_SEED_BASE58')
     base58_provided = False
     if seed_base58 is not None:
@@ -178,8 +178,10 @@ if __name__ == "__main__":
     create_configs_dir()
 
     file_path = "/waves/configs/waves-config.conf"
-    url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/waves-" + NETWORK.lower() + ".conf"
+    url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/node/waves-" + NETWORK.lower() + ".conf"
     urllib.request.urlretrieve(url, file_path)
+
+    set_pywaves_node(NETWORK)
 
     wallet_data = get_wallet_data()
 
@@ -195,8 +197,6 @@ if __name__ == "__main__":
     else:
         env_dict = {}
     env_dict = parse_env_variables(env_dict)
-
-    set_pywaves_node(NETWORK)
 
     nested_set(env_dict, ['waves', 'directory'], '/waves')
     nested_set(env_dict, ['waves', 'data-directory'], '/waves/data')
