@@ -13,11 +13,11 @@ RUN apt-get update -y && apt-get install -y python3 \
   && pip3 install --upgrade pip
 
 
-RUN pip3 install requests pyhocon pywaves tqdm
+RUN pip3 install requests pyhocon pywaves==0.8.22 tqdm
 
-WORKDIR /
+WORKDIR /waves-node
 
-RUN mkdir /waves-node
+RUN install -m 0775 -d /waves -d /waves-node
 COPY starter.py /waves-node
 COPY entrypoint.sh /waves-node
 RUN chmod 777 /waves-node/entrypoint.sh
