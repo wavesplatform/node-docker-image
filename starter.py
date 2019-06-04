@@ -178,7 +178,14 @@ if __name__ == "__main__":
     create_configs_dir()
 
     file_path = "/waves/configs/waves-config.conf"
-    url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/node/waves-" + NETWORK.lower() + ".conf"
+    try:
+      url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/node/waves-" + NETWORK.lower() + ".conf"
+      urllib.request.urlretrieve(url, file_path)
+    except:
+      url = "https://raw.githubusercontent.com/wavesplatform/Waves/v" + VERSION + "/waves-" + NETWORK.lower() + ".conf"
+      urllib.request.urlretrieve(url, file_path)
+
+
     urllib.request.urlretrieve(url, file_path)
 
     set_pywaves_node(NETWORK)
