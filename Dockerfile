@@ -1,4 +1,4 @@
-FROM openjdk:10-jre-slim
+FROM openjdk:8-jre-slim
 ENV WAVES_VERSION="latest"
 ENV WAVES_LOG_LEVEL="DEBUG"
 ENV WAVES_HEAP_SIZE="2g"
