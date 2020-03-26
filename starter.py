@@ -18,7 +18,7 @@ DEFAULT_THRESHOLD = 0
 DEFAULT_AUTODETECT = 'yes'
 network_names = ['MAINNET', 'TESTNET', 'DEVNET']
 
-DEFAULT_NODES = ['https://nodes.wavesnodes.com', 'https://testnodes.wavesnodes.com/', 'http://127.0.0.1:6869']
+DEFAULT_NODES = ['https://nodes.wavesnodes.com', 'https://nodes-testnet.wavesnodes.com/', 'http://127.0.0.1:6869']
 NETWORK = os.environ.get('WAVES_NETWORK')
 
 LOCAL_FILE_PATH = '/waves/configs/local.conf'
