@@ -57,7 +57,7 @@ If you want to pass configuration file to the node, it should be in mounted volu
 The image supports config customization with env variables. 
 Depending on env values the image generates `local.conf` file and stores it in `/waves/configs` directory.
 The simple rule of how to set a value in the configuration file:
-0. Determine the path to variable in configuration file ([complete configuration file](https://docs.wavesplatform.com/en/waves-full-node/how-to-configure-a-node.html))
+0. Determine the path to variable in configuration file ([complete configuration file](https://docs.wavesplatform.com/en/waves-node/node-configuration-file))
 1. Join all section names with two underscores(`__`).
 2. Replace all dashes with one underscore (`_`).
 3. Capitalize the final string.
