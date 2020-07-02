@@ -1,5 +1,9 @@
 # Waves Node in Docker
 
+## [WARNING] Deprecation
+
+This image is deprecated, we highly recommend to use [wavesplatform/wavesnode](https://hub.docker.com/r/wavesplatform/wavesnode) image instead.
+
 ## About Waves
 Waves is a decentralized platform that allows any user to issue, transfer, swap and trade custom blockchain tokens on an integrated peer-to-peer exchange. You can find more information about Waves at [wavesplatform.com](https://wavesplatform.com) and in the official [documentation]((https://docs.wavesplatform.com)).
 
